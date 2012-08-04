@@ -12,7 +12,7 @@ module AwesomeGrid
 
         data_source = model_or_array
 
-        yield(builder)
+        yield(builder) if block_given?
 
         concat(content_tag(:table, html_params) do
 
@@ -54,8 +54,8 @@ module AwesomeGrid
           content_tag(:tr) do
             builder.columns.map do |column|
               unless footer.nil?
-                footer_column = footer.columns.reject{|c| c.id != column.id}.first
-                cell_content = footer_column.block.call() unless footer_column.nil? or footer_column.block.nil?
+                footer_column = footer.columns.reject{|c| c.id.to_s != column.id.to_s}.first
+                cell_content = footer_column.block.call unless footer_column.nil? or footer_column.block.nil?
               else
                 cell_content = ''
               end
@@ -104,8 +104,8 @@ module AwesomeGrid
       class Footer
         attr_reader :options, :block, :columns
 
-        def initialize(options={}, block=nil)
-          @block, @columns = block, []
+        def initialize(options={})
+          @columns = []
           @options = {
 
           }.merge(options)
@@ -129,11 +129,15 @@ module AwesomeGrid
         end
 
         def header(options={}, &block)
-          @headers << Header.new(options, block)
+          header = Header.new(options)
+          yield(header) if block_given?
+          @headers << header
         end
 
-        def footer(options={}, &block)
-          @footers << Footer.new(options, block)
+        def footer(options={})
+          footer = Footer.new(options)
+          yield(footer) if block_given?
+          @footers << footer
         end
 
       end

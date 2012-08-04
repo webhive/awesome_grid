@@ -34,19 +34,20 @@ describe 'AwesomeGrid#cell formatting' do
         end
         grid.footer do |footer|
           footer.column(:title) do
-            'Bla-Bla-Bla'
+            'Footer text'
           end
         end
         grid.footer do |footer|
           footer.column(:title) do
-            'Bla-Bla-Bla'
+            'Footer text'
           end
         end
       end
       output_buffer.should have_tag('table')
       output_buffer.should have_tag('thead')
       output_buffer.should have_tag('tfoot')
-      output_buffer.should_not have_tag('div.title-wrapper', :count => @posts.size)
+      output_buffer.should have_tag('div.title-wrapper', :count => @posts.size)
+      output_buffer.should have_tag('td.title', :text => 'Footer text', :count => 2)
     end
   end
 
