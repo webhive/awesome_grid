@@ -15,8 +15,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = AwesomeGrid::VERSION
 
-  gem.add_dependency(%q<rails>, ["~> 2.3.8"])
-  gem.add_dependency(%q<rake>, ["~> 0.8.7"])
+  gem.add_dependency(%q<rails>, ["> 2.3.0"])
+  gem.add_dependency(%q<rake>, ["> 0.8.7"])
 
   gem.add_development_dependency(%q<rspec-rails>, ["~> 1.3"])
   gem.add_development_dependency(%q<rspec_tag_matchers>, [">= 1.0.0"])
