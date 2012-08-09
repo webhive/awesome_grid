@@ -14,7 +14,7 @@ module AwesomeGrid
 
         yield(builder) if block_given?
 
-        concat(content_tag(:table, html_params) do
+        (content_tag(:table, html_params) do
 
           builder.header if params[:header] and builder.headers.empty?
           builder.headers.map do |header|
@@ -36,15 +36,26 @@ module AwesomeGrid
 
       def body_for(builder, data_source)
            concat(content_tag(:tbody) do
-            data_source.map do |row|
-              id = [row.class.to_s, row.id].join('-').downcase.dasherize
-              content_tag(:tr, :id => id ) do
-                builder.columns.map do |column|
-                  cell_content = row.send(column.id)
-                  cell_content = column.block.call(cell_content) unless column.block.nil?
-                  content_tag(:td, cell_content, :class => column.id)
+            data_source.map do |item|
+              row = Row.new(item)
+              # build row cells array
+              cells = builder.columns.map do |column|
+                if column.block.nil?
+                  cell_content = item.send(column.id) rescue nil
+                else
+                  cell = Cell.new(row, column)
+                  cell_content = capture{column.block.call(cell)}
                 end
+                content_tag(:td, cell_content, :class => column.id)
               end
+
+              # build row
+              id = [item.class.to_s, item.id].join('-').downcase.dasherize
+              concat(content_tag(:tr, :id => id ) do
+                cells.each do |cell|
+                  concat(cell)
+                end
+              end)
             end
           end)
      end
@@ -59,7 +70,7 @@ module AwesomeGrid
               else
                 cell_content = ''
               end
-              content_tag(:td, cell_content, :class => column.id)
+              concat(content_tag(:td, cell_content, :class => column.id))
             end
           end
         end)
@@ -69,10 +80,24 @@ module AwesomeGrid
         concat(content_tag(:thead) do
           content_tag(:tr) do
             builder.columns.map do |column|
-              content_tag(:th, column.id, :class => column.id)
+              concat(content_tag(:th, column.id, :class => column.id))
             end
           end
         end)
+      end
+
+      class Row
+        attr_reader :object
+        def initialize(object, params = {})
+          @object, @params = object, params
+        end
+      end
+
+      class Cell
+        attr_reader :row, :column
+        def initialize(row, column, params = {})
+          @row, @column, @params = row, column, params
+        end
       end
 
       class Column
@@ -126,18 +151,21 @@ module AwesomeGrid
 
         def column(id, options={}, &block)
           @columns << Column.new(id, options, block)
+          ''
         end
 
         def header(options={}, &block)
           header = Header.new(options)
           yield(header) if block_given?
           @headers << header
+          ''
         end
 
         def footer(options={})
           footer = Footer.new(options)
           yield(footer) if block_given?
           @footers << footer
+          ''
         end
 
       end
