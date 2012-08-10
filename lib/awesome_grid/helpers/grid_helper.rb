@@ -52,7 +52,7 @@ module AwesomeGrid
               # build row
               row_id = [item.class.to_s, item.id].join('-').downcase.dasherize
               row_class = index.even? ? 'even' : 'odd'
-              concat(content_tag(:tr, :id => row_id, :class => row_class ) do
+              concat(content_tag(:tr, :id => item.to_row_id, :class => row_class ) do
                 cells.each do |cell|
                   concat(cell)
                 end
