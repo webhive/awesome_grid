@@ -36,7 +36,7 @@ module AwesomeGrid
 
       def body_for(builder, data_source)
            concat(content_tag(:tbody) do
-            data_source.map do |item|
+            data_source.each_with_index do |item, index|
               row = Row.new(item)
               # build row cells array
               cells = builder.columns.map do |column|
@@ -46,12 +46,13 @@ module AwesomeGrid
                   cell = Cell.new(row, column)
                   cell_content = capture{column.block.call(cell)}
                 end
-                content_tag(:td, cell_content, :class => column.id)
+                content_tag(:td, cell_content, :class => column.id.to_s.downcase.dasherize)
               end
 
               # build row
-              id = [item.class.to_s, item.id].join('-').downcase.dasherize
-              concat(content_tag(:tr, :id => id ) do
+              row_id = [item.class.to_s, item.id].join('-').downcase.dasherize
+              row_class = index.even? ? 'even' : 'odd'
+              concat(content_tag(:tr, :id => row_id, :class => row_class ) do
                 cells.each do |cell|
                   concat(cell)
                 end
@@ -70,7 +71,7 @@ module AwesomeGrid
               else
                 cell_content = ''
               end
-              concat(content_tag(:td, cell_content, :class => column.id))
+              concat(content_tag(:td, cell_content, :class => column.id.to_s.downcase.dasherize))
             end
           end
         end)
@@ -80,7 +81,7 @@ module AwesomeGrid
         concat(content_tag(:thead) do
           content_tag(:tr) do
             builder.columns.map do |column|
-              concat(content_tag(:th, column.id, :class => column.id))
+              concat(content_tag(:th, I18n.t(column.id, :scope => [:grid, :columns]), :class => column.id.to_s.downcase.dasherize))
             end
           end
         end)
