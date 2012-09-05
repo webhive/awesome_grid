@@ -44,7 +44,7 @@ module AwesomeGrid
                   cell_content = item.send(column.id) rescue nil
                 else
                   cell = Cell.new(row, column)
-                  cell_content = capture{column.block.call(cell)}
+                  cell_content = capture{column.block.call(item, cell, row)}
                 end
                 content_tag(:td, cell_content, :class => column.id.to_s.downcase.dasherize)
               end
