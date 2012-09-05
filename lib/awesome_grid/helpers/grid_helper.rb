@@ -81,7 +81,7 @@ module AwesomeGrid
         concat(content_tag(:thead) do
           content_tag(:tr) do
             builder.columns.map do |column|
-              concat(content_tag(:th, I18n.t(column.id, :scope => [:grid, :columns]), :class => column.id.to_s.downcase.dasherize))
+              concat(content_tag(:th, column.title, :class => column.id.to_s.downcase.dasherize))
             end
           end
         end)
@@ -109,6 +109,15 @@ module AwesomeGrid
           @options = {
 
           }.merge(options)
+        end
+
+        def title
+          if options.key?(:title)
+            options[:title]
+          else
+            # I18n.t(id, :scope => [:activerecord, :attributes, ,id])
+            I18n.t(id, :scope => [:grid, :columns])
+          end
         end
       end
 
