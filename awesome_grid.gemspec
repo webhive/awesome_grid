@@ -4,8 +4,8 @@ require File.expand_path('../lib/awesome_grid/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Roman Tataurov"]
   gem.email         = ["tataurov@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Easy way to build data grids}
+  gem.summary       = %q{Easy way to build data grids}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
